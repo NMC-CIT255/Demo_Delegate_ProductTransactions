@@ -8,7 +8,7 @@ namespace Demo_Delegate_ProductTransactions
 {
     class Program
     {
-        public delegate void SellProduct(Item item, int units);
+        public delegate void ProductTransaction(Item item, int units);
 
         static void Main(string[] args)
         {
@@ -17,7 +17,26 @@ namespace Demo_Delegate_ProductTransactions
             inventory = InitializeInventory();
 
             DisplayInventory(inventory);
+            DisplayPerformTransactions(inventory);
+            DisplayInventory(inventory);
 
+            Console.ReadKey();
+        }
+
+        private static void DisplayPerformTransactions(IList<Item> inventory)
+        {
+            ProductTransaction sellNonPerishableProduct = new ProductTransaction(ProcessNonPerishableSale);
+            ProductTransaction sellPerishableProduct = new ProductTransaction(ProcessPerishableSale);
+
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine("Perform Transactions");
+            Console.WriteLine();
+
+            sellPerishableProduct(inventory[0], 5);
+            sellNonPerishableProduct(inventory[1], 2);
+
+            Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
         }
 
@@ -84,7 +103,7 @@ namespace Demo_Delegate_ProductTransactions
             nonPerishableItem.InventoryToOrder += units;
         }
 
-        public static void ProcessTransaction(SellProduct transaction,Item item, int units)
+        public static void ProcessTransaction(ProductTransaction transaction,Item item, int units)
         {
             transaction(item, units);
         }
