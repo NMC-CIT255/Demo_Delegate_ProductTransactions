@@ -15,7 +15,7 @@ namespace Demo_Delegate_ProductTransactions
         {
             Pots,
             Pans,
-            Spatulas
+            Knives
         }
 
         public Name ItemName { get; set; }

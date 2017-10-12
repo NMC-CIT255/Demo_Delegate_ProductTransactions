@@ -31,17 +31,16 @@ namespace Demo_Delegate_ProductTransactions
         private static void DisplayPerformTransactions(IList<Item> inventory)
         {
             //
-            // instantiate objects
+            // declare delegate object
             //
-            ProductTransaction sellNonPerishableProduct = new ProductTransaction(ProcessNonPerishableSale);
-            ProductTransaction sellPerishableProduct = new ProductTransaction(ProcessPerishableSale);
+            ProductTransaction productTransaction = null;
 
             //
             // sell products
             //
             foreach (var item in inventory)
             {
-                int unitsSold;
+                int unitsSold = 0;
 
                 Console.Clear();
                 Console.WriteLine();
@@ -58,7 +57,7 @@ namespace Demo_Delegate_ProductTransactions
                     Console.Write($"Enter the number of {nonPerishableItem.ItemName} sold: ");
                     if (int.TryParse(Console.ReadLine(), out unitsSold))
                     {
-                        sellNonPerishableProduct(item, unitsSold);
+                        productTransaction = ProcessNonPerishableSale;
                     }
                 }
                 else if (item is Perishable)
@@ -68,13 +67,14 @@ namespace Demo_Delegate_ProductTransactions
                     Console.Write($"Enter the number of {perishableItem.ItemName} sold: ");
                     if (int.TryParse(Console.ReadLine(), out unitsSold))
                     {
-                        sellPerishableProduct(item, unitsSold);
+                        productTransaction = ProcessPerishableSale;
                     }
                 }
-                else
-                {
-                    Console.WriteLine("Item has no category.");
-                }
+
+                //
+                // process the transaction
+                //
+                ProcessTransaction(productTransaction, item, unitsSold);
             }
 
             Console.WriteLine();
@@ -89,13 +89,11 @@ namespace Demo_Delegate_ProductTransactions
         /// <returns>List of Items</returns>
         public static IList<Item> InitializeInventory()
         {
-            IList<Item> inventory = new List<Item>();
-
-            Perishable perishableStockItem01 = new Perishable(Perishable.Name.Apples, 10);
-            NonPerishable nonPerishableItem01 = new NonPerishable(NonPerishable.Name.Pots, 20);
-
-            inventory.Add(perishableStockItem01);
-            inventory.Add(nonPerishableItem01);
+            IList<Item> inventory = new List<Item>()
+            {
+                new Perishable() { ItemName = Perishable.Name.Apples, CurrentInventory = 10 },
+                new NonPerishable() { ItemName = NonPerishable.Name.Knives, CurrentInventory = 20 }
+            };
 
             return inventory;
         }
@@ -172,8 +170,8 @@ namespace Demo_Delegate_ProductTransactions
             }
             else
             {
-                nonPerishableItem.CurrentInventory = 0;
                 nonPerishableItem.InventoryToOrder = Math.Abs(nonPerishableItem.CurrentInventory - units);
+                nonPerishableItem.CurrentInventory = 0;
             }
         }
 
