@@ -30,12 +30,32 @@ namespace Demo_Delegate_ProductTransactions
 
             Console.Clear();
             Console.WriteLine();
-            Console.WriteLine("Perform Transactions");
+            Console.WriteLine("Sell Products");
             Console.WriteLine();
 
-            sellPerishableProduct(inventory[0], 5);
-            sellNonPerishableProduct(inventory[1], 2);
-
+            //
+            // sell products
+            //
+            foreach (var item in inventory)
+            {
+                if (item is NonPerishable)
+                {
+                    NonPerishable nonPerishableItem = new NonPerishable();
+                    nonPerishableItem = item as NonPerishable;
+                    sellNonPerishableProduct(item, 2);
+                }
+                else if (item is Perishable)
+                {
+                    NonPerishable nonPerishableItem = new NonPerishable();
+                    nonPerishableItem = item as NonPerishable;
+                    sellPerishableProduct(item, 5);
+                }
+                else
+                {
+                    Console.WriteLine("Item has no category.");
+                }
+            }
+            
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
         }
@@ -98,12 +118,18 @@ namespace Demo_Delegate_ProductTransactions
         {
             NonPerishable nonPerishableItem = new NonPerishable();
             nonPerishableItem = item as NonPerishable;
-
-            nonPerishableItem.CurrentInventory -= units;
-            nonPerishableItem.InventoryToOrder += units;
+            if (item.CurrentInventory >= units)
+            {
+                nonPerishableItem.CurrentInventory -= units;
+            }
+            else
+            {
+                nonPerishableItem.CurrentInventory = 0;
+                nonPerishableItem.InventoryToOrder = Math.Abs(nonPerishableItem.CurrentInventory - units);
+            }
         }
 
-        public static void ProcessTransaction(ProductTransaction transaction,Item item, int units)
+        public static void ProcessTransaction(ProductTransaction transaction, Item item, int units)
         {
             transaction(item, units);
         }
