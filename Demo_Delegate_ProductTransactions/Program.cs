@@ -14,7 +14,7 @@ namespace Demo_Delegate_ProductTransactions
         {
             List<Item> inventory = new List<Item>();
 
-            //inventory = InitializeInventory();
+            inventory = InitializeInventory();
 
             SellProduct sellPerishableItem = new SellProduct(ProcessPerishableSale);
 
