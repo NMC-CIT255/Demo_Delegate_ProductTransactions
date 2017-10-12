@@ -25,37 +25,47 @@ namespace Demo_Delegate_ProductTransactions
 
         private static void DisplayPerformTransactions(IList<Item> inventory)
         {
+            //
+            // instantiate objects
+            //
             ProductTransaction sellNonPerishableProduct = new ProductTransaction(ProcessNonPerishableSale);
             ProductTransaction sellPerishableProduct = new ProductTransaction(ProcessPerishableSale);
-
-            Console.Clear();
-            Console.WriteLine();
-            Console.WriteLine("Sell Products");
-            Console.WriteLine();
 
             //
             // sell products
             //
             foreach (var item in inventory)
             {
+
+                Console.Clear();
+                Console.WriteLine();
+                Console.WriteLine("Sell Products");
+                Console.WriteLine();
+
                 if (item is NonPerishable)
                 {
                     NonPerishable nonPerishableItem = new NonPerishable();
                     nonPerishableItem = item as NonPerishable;
-                    sellNonPerishableProduct(item, 2);
+                    Console.Write($"Enter the number of {nonPerishableItem.ItemName} sold: ");
+                    int unitsSold = int.Parse(Console.ReadLine());
+                    sellNonPerishableProduct(item, unitsSold);
                 }
                 else if (item is Perishable)
                 {
-                    NonPerishable nonPerishableItem = new NonPerishable();
-                    nonPerishableItem = item as NonPerishable;
-                    sellPerishableProduct(item, 5);
+                    Perishable perishableItem = new Perishable();
+                    perishableItem = item as Perishable;
+                    Console.Write($"Enter the number of {perishableItem.ItemName} sold: ");
+                    int unitsSold = int.Parse(Console.ReadLine());
+                    sellPerishableProduct(item, unitsSold);
                 }
                 else
                 {
                     Console.WriteLine("Item has no category.");
                 }
             }
-            
+
+            Console.WriteLine();
+            Console.WriteLine("Inventory Complete");
             Console.WriteLine("Press any key to continue.");
             Console.ReadKey();
         }
@@ -111,7 +121,14 @@ namespace Demo_Delegate_ProductTransactions
             Perishable perishableItem = new Perishable();
             perishableItem = item as Perishable;
 
-            perishableItem.CurrentInventory -= units;
+            if (item.CurrentInventory >= units)
+            {
+                perishableItem.CurrentInventory -= units;
+            }
+            else
+            {
+                perishableItem.CurrentInventory = 0;
+            }
         }
 
         public static void ProcessNonPerishableSale(Item item, int units)
